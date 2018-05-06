@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="jquery-3.3.1.min.js"></script>
+    <title>三张图的轮播</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .clearfix:after,
+        .clearfix:before {
+            content: "";
+            height: 0px;
+            visibility: hidden;
+            clear: both;
+            display: block;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        .main {
+            width: 352px;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel {
+            width: 1408px;
+            list-style: none;
+        }
+
+        .carousel-item {
+            width: 352px;
+            height: 220px;
+            float: left;
+        }
+
+        .btn {
+            position: absolute;
+            bottom: 10px;
+            left: 120px;
+            list-style: none;
+        }
+
+        .btn .btn-item {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .btn .active {
+            background: yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <uL class="carousel clearfix">
+            <li class="carousel-item">
+                <img src="images/carousel1.jpg">
+            </li>
+            <li class="carousel-item">
+                <img src="images/carousel2.jpg">
+            </li>
+            <li class="carousel-item">
+                <img src="images/carousel3.jpg">
+            </li>
+            <li class="carousel-item">
+                <img src="images/carousel1.jpg">
+            </li>
+        </uL>
+        <ul class="btn">
+            <li class="btn-item "></li>
+            <li class="btn-item"></li>
+            <li class="btn-item"></li>
+        </ul>
+    </div>
+    <script>
+        var carousel = document.getElementsByClassName("carousel")[0];
+        var carouselImg = document.getElementsByClassName("carousel-item");
+        var w = carouselImg[0].offsetWidth;
+        var number = carouselImg.length;
+        var btn = document.getElementsByClassName("btn")[0];
+        var btnItem = document.getElementsByClassName("btn-item");
+        var i = 0;
+        var sum = 0;
+        // 改变按钮背景颜色
+        function btnBg() {
+            $(".btn-item").removeClass("active");
+            $("body").find(".btn-item").eq(i).addClass("active");
+        }
+        // 定时器循环播放的函数
+        function lunbo() {
+            if (carousel.style.marginLeft == -w * (number - 1) + "px") {
+                $(".carousel").css({ "marginLeft": "0px" });
+            }
+            $(".carousel").animate({ "marginLeft": sum + "px" }, 1000);
+            if (i == 3) {
+                $(".btn-item").removeClass("active");
+                $("body").find(".btn-item").eq(0).addClass("active");
+            }else{
+                btnBg();
+            }
+            sum = sum - 352;
+            i++;
+            if (i > 3) {
+                i = 1;
+                sum = -352;
+            }
+        }
+        // 开启定时器
+        carousel.timer = setInterval(lunbo, 2000)
+        // 点击小按钮函数
+        for (var j = 0; j < 3; j++) {
+            btnItem[j].index = j;
+            btnItem[j].onclick = function () {
+                clearInterval(carousel.timer);
+                // carousel.style.marginLeft = -w * this.index + "px";
+                $(".carousel").animate({"marginLeft":-w*this.index+"px"})
+                i = this.index;
+                sum = -w * this.index;
+                btnBg();
+            }
+        }
+        carousel.onmouseover = function () {
+            clearInterval(carousel.timer);
+        }
+        carousel.onmouseout = function () {
+            carousel.timer = setInterval(lunbo, 2000);
+        }
+        // 针对切换页面轮播乱滑现象
+        window.onblur=function(){
+            clearInterval(carousel.timer);
+        }
+        window.onfocus=function(){
+            carousel.timer=setInterval(lunbo,2000);
+        }
+    </script>
+</body>
+
+</html>
